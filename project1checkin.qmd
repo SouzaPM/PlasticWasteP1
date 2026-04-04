@@ -1,0 +1,31 @@
+---
+title: "Project1 Draft"
+format: html
+editor: visual
+---
+
+## Context
+
+This data set was independently gathered by an individual in order to contribute to the global audit that the Break Free from Plastic organization holds each year. They collected data on their own town of St. John in Newfoundland. The dataset has information on the amount of different plastic waste (polyester, pvc, polyethylene, etc.) as well as the grand total of all plastic types, number of counting events, and number of volunteers at each cleanup.
+
+## Data Cleaning:
+
+From the included code on the data set, we can see that they have already taken measures to clean the data. It appears that most of the cleaning is making sure that each variable is the correct type as well as renaming columns and fixing all the numeric values.
+
+## Research Questions w/ Data:
+
+-   Does the mean average of plastic waste per count event differ between each plastic type
+
+-   Does the overall plastic waste differ between 2019 and 2020
+
+-   What is the relationship between the amount of volunteers and the
+
+## Research Questions w/ Supplemental Data:
+
+-   Does the average plastic waste in St. John differ from other cities?
+
+-   Does the amount of volunteers St. John has differ from other cities?
+
+## Potential Visualizations:
+
+-   <https://excalidraw.com/#json=VqbcZ1Dds7wym3M6Ux9X5,LvRZ1Q5smV5xQozI1HNt0w>
