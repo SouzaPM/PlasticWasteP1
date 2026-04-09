@@ -53,6 +53,7 @@ country_volunteers("Doble Cola")
 ```
 
 ```{r}
+## Creating proportions of volunteers 
 volunteer_props <- function(data) {
   data |>
     group_by(parent_company) |>
