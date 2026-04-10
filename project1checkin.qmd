@@ -88,5 +88,9 @@ plastic_summary
 ```
 
 ```{r}
+volunteer_summary <- plastics %>% 
+  map(.f = country_volunteers) %>% 
+  bind_rows(.id = "id")
 
+volunteer_summary
 ```
