@@ -134,7 +134,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>plastics <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2021/2021-01-26/plastics.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(httr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'httr' was built under R version 4.3.3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'jsonlite' was built under R version 4.3.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'jsonlite'
+
+The following object is masked from 'package:purrr':
+
+    flatten</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyjson)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'tidyjson'
+
+The following object is masked from 'package:jsonlite':
+
+    read_json
+
+The following object is masked from 'package:stats':
+
+    filter</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(countrycode)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>plastics <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2021/2021-01-26/plastics.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 13380 Columns: 14
 ── Column specification ────────────────────────────────────────────────────────
@@ -159,14 +192,13 @@ dbl (12): year, empty, hdpe, ldpe, o, pet, pp, ps, pvc, grand_total, num_eve...
 <ul>
 <li><p>Does the mean average of plastic waste per count event differ between each plastic type?</p></li>
 <li><p>Does the overall plastic waste differ between 2019 and 2020?</p></li>
-<li><p>What is the relationship between the amount of volunteers and the</p></li>
 </ul>
 </section>
 <section id="research-questions-w-supplemental-data" class="level2">
 <h2 class="anchored" data-anchor-id="research-questions-w-supplemental-data">Research Questions w/ Supplemental Data:</h2>
 <ul>
-<li><p>Does the average plastic waste in St.&nbsp;John differ from other cities?</p></li>
-<li><p>Does the amount of volunteers St.&nbsp;John has differ from other cities?</p></li>
+<li><p>Do richer countries generate more plastic waste per person?</p></li>
+<li><p>Did the COVID-19 lockdown in 2020 affect plastic waste pollution in the same way it affected CO2 emissions?</p></li>
 </ul>
 </section>
 <section id="potential-visualizations" class="level2">
@@ -174,102 +206,285 @@ dbl (12): year, empty, hdpe, ldpe, o, pet, pp, ps, pvc, grand_total, num_eve...
 <ul>
 <li><a href="https://excalidraw.com/#json=VqbcZ1Dds7wym3M6Ux9X5,LvRZ1Q5smV5xQozI1HNt0w" class="uri">https://excalidraw.com/#json=VqbcZ1Dds7wym3M6Ux9X5,LvRZ1Q5smV5xQozI1HNt0w</a></li>
 </ul>
+</section>
+<section id="check-in-2" class="level2">
+<h2 class="anchored" data-anchor-id="check-in-2">Check In 2:</h2>
+</section>
+<section id="data-summary-1" class="level2">
+<h2 class="anchored" data-anchor-id="data-summary-1">Data Summary 1:</h2>
+<p>How much waste is collected per volunteer change over time?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Does the parent company send different amount of volunteers to different countries?</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>country_volunteers <span class="ot">&lt;-</span> <span class="cf">function</span>(company_name) {</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  plastics  <span class="sc">|&gt;</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(parent_company <span class="sc">==</span> company_name) <span class="sc">|&gt;</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(country) <span class="sc">|&gt;</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">total_volunteers =</span> <span class="fu">sum</span>(volunteers, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(<span class="fu">desc</span>(total_volunteers))</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="fu">country_volunteers</span>(<span class="st">"The Coca-Cola Company"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>waste_per_volunteer <span class="ot">&lt;-</span> plastics <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">waste_per_volunteer =</span> grand_total <span class="sc">/</span> volunteers</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_waste_per_volunteer =</span> <span class="fu">mean</span>(waste_per_volunteer, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>waste_per_volunteer</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 61 × 2
-   country     total_volunteers
-   &lt;chr&gt;                  &lt;dbl&gt;
- 1 Indonesia               7242
- 2 Philippines             4666
- 3 China                   3614
- 4 Tanzania                2822
- 5 Kenya                   2168
- 6 Nigeria                 2099
- 7 NIGERIA                 1648
- 8 EMPTY                   1416
- 9 Ghana                   1410
-10 Japan                   1296
-# ℹ 51 more rows</code></pre>
+<pre><code># A tibble: 2 × 2
+   year avg_waste_per_volunteer
+  &lt;dbl&gt;                   &lt;dbl&gt;
+1  2019                   0.197
+2  2020                   0.786</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">country_volunteers</span>(<span class="st">"Doble Cola"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-summary-2" class="level2">
+<h2 class="anchored" data-anchor-id="data-summary-2">Data Summary 2:</h2>
+<p>How much waste is collected per cleanup event over time?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>waste_per_event_summary <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  data <span class="sc">|&gt;</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">waste_per_event =</span> grand_total <span class="sc">/</span> num_events</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">avg_waste_per_event =</span> <span class="fu">mean</span>(waste_per_event, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="fu">waste_per_event_summary</span>(plastics)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 2
-  country   total_volunteers
-  &lt;chr&gt;                &lt;dbl&gt;
-1 Argentina              243</code></pre>
+<pre><code># A tibble: 2 × 2
+   year avg_waste_per_event
+  &lt;dbl&gt;               &lt;dbl&gt;
+1  2019                27.4
+2  2020                17.1</code></pre>
 </div>
+</div>
+</section>
+<section id="data-summary-3" class="level2">
+<h2 class="anchored" data-anchor-id="data-summary-3">Data Summary 3:</h2>
+<p>Which parent companies contributed the most volunteers across both years?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>total_company_volunteers <span class="ot">&lt;-</span> <span class="cf">function</span>(company) {</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  plastics <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(parent_company <span class="sc">==</span> company) <span class="sc">|&gt;</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">total_volunteers =</span> <span class="fu">sum</span>(volunteers, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(total_volunteers)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>plastics <span class="sc">|&gt;</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(parent_company) <span class="sc">|&gt;</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_volunteers =</span> <span class="fu">map_dbl</span>(parent_company, total_company_volunteers)</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(total_volunteers, <span class="at">n =</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+   parent_company           total_volunteers
+   &lt;chr&gt;                               &lt;dbl&gt;
+ 1 Grand Total                         72236
+ 2 Unbranded                           67159
+ 3 Philip Morris                       50153
+ 4 Imperial Brands                     49333
+ 5 British American Tobacco            43120
+ 6 The Coca-Cola Company               40757
+ 7 Reynolds American, Inc.             39279
+ 8 Unilever                            35555
+ 9 LM                                  32734
+10 L&amp;D                                 32734</code></pre>
+</div>
+</div>
+</section>
+<section id="data-summary-4" class="level2">
+<h2 class="anchored" data-anchor-id="data-summary-4">Data Summary 4:</h2>
+<p>Which parent companies are responsible for the most total plastic waste?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>top_companies <span class="ot">&lt;-</span> plastics <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(parent_company) <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_waste =</span> <span class="fu">sum</span>(grand_total, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(total_waste, <span class="at">n =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(parent_company)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dfr</span>(top_companies, <span class="sc">~</span> {</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  plastics <span class="sc">|&gt;</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(parent_company <span class="sc">==</span> .x) <span class="sc">|&gt;</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">total_waste =</span> <span class="fu">sum</span>(grand_total, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">parent_company =</span> .x)</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+   total_waste parent_company              
+         &lt;dbl&gt; &lt;chr&gt;                       
+ 1      429231 Grand Total                 
+ 2      364075 Unbranded                   
+ 3       84973 null                        
+ 4       25530 The Coca-Cola Company       
+ 5       19217 NULL                        
+ 6       15221 La Doo                      
+ 7        8651 Universal Robina Corporation
+ 8        8642 Nestle                      
+ 9        8589 Unilever                    
+10        6545 Colgate-Palmolive           </code></pre>
+</div>
+</div>
+</section>
+<section id="check-in-3" class="level2">
+<h2 class="anchored" data-anchor-id="check-in-3">Check-In 3:</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">#renaming countries in my dataset to have ISO-2 codes that our API uses</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>plastics <span class="ot">&lt;-</span> plastics <span class="sc">%&gt;%</span> </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">!=</span> <span class="st">"EMPTY"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">iso2 =</span> <span class="fu">countrycode</span>(country, </span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">origin =</span> <span class="st">"country.name"</span>, </span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">destination =</span> <span class="st">"iso2c"</span>))</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>iso2_list <span class="ot">&lt;-</span> <span class="fu">unique</span>(plastics<span class="sc">$</span>iso2)</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>iso2_list <span class="ot">&lt;-</span> iso2_list[iso2_list <span class="sc">!=</span> <span class="st">"TW"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Creating proportions of volunteers </span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>volunteer_props <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  data <span class="sc">|&gt;</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(parent_company) <span class="sc">|&gt;</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">prop_volunteers =</span> volunteers <span class="sc">/</span> <span class="fu">sum</span>(volunteers, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">volunteer_props</span>(plastics)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 13,380 × 15
-   country   year parent_company empty  hdpe  ldpe     o   pet    pp    ps   pvc
-   &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
- 1 Argenti…  2019 Grand Total        0   215    55   607  1376   281   116    18
- 2 Argenti…  2019 Unbranded          0   155    50   532   848   122   114    17
- 3 Argenti…  2019 The Coca-Cola…     0     0     0     0   222    35     0     0
- 4 Argenti…  2019 Secco              0     0     0     0    39     4     0     0
- 5 Argenti…  2019 Doble Cola         0     0     0     0    38     0     0     0
- 6 Argenti…  2019 Pritty             0     0     0     0    22     7     0     0
- 7 Argenti…  2019 PepsiCo            0     0     0     0    21     6     0     0
- 8 Argenti…  2019 Casoni             0     0     0     0    26     0     0     0
- 9 Argenti…  2019 Villa Del Sur…     0     0     0     0    19     1     0     0
-10 Argenti…  2019 Manaos             0     0     0     0    14     4     0     0
-# ℹ 13,370 more rows
-# ℹ 4 more variables: grand_total &lt;dbl&gt;, num_events &lt;dbl&gt;, volunteers &lt;dbl&gt;,
-#   prop_volunteers &lt;dbl&gt;</code></pre>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co">#testing API for one country gdp</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>us_url <span class="ot">&lt;-</span> <span class="st">"https://api.worldbank.org/v2/country/US/indicator/NY.GDP.MKTP.CD?format=json"</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>us_data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(us_url)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>us_gdp <span class="ot">&lt;-</span> us_data[[<span class="dv">2</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<p>##Iterations</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Total waste per plastic type</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>plastic_types <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"hdpe"</span>, <span class="st">"ldpe"</span>, <span class="st">"o"</span>, <span class="st">"pet"</span>, <span class="st">"pp"</span>, <span class="st">"ps"</span>, <span class="st">"pvc"</span>)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>plastic_summary <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (type <span class="cf">in</span> plastic_types) {</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  placehold <span class="ot">&lt;-</span> plastics <span class="sc">|&gt;</span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">plastic_type =</span> type,</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">total_waste =</span> <span class="fu">sum</span>(.data[[type]], <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  plastic_summary <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(plastic_summary, placehold)</span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>plastic_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>get_gdp <span class="ot">&lt;-</span> <span class="cf">function</span>(iso2) {</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  url <span class="ot">&lt;-</span> <span class="fu">glue</span>(<span class="st">"https://api.worldbank.org/v2/country/{iso2}/indicator/NY.GDP.MKTP.CD?format=json"</span>)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  my_data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(url)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(my_data[[<span class="dv">2</span>]])){</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span>{</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(my_data[[<span class="dv">2</span>]] <span class="sc">%&gt;%</span> </span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>             <span class="fu">filter</span>(date <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2019"</span>,<span class="st">"2020"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>             <span class="fu">select</span>(date, value) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>             <span class="fu">mutate</span>(<span class="at">iso2c =</span> iso2,</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>                    <span class="at">value =</span> value<span class="sc">/</span><span class="fl">1e9</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>             <span class="fu">rename</span>(<span class="at">gdp_billions =</span> value))</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a><span class="fu">get_gdp</span>(<span class="st">"AU"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  plastic_type total_waste
-1         hdpe       35742
-2         ldpe      116640
-3            o      650583
-4          pet      275700
-5           pp       97696
-6           ps       21243
-7          pvc        3169</code></pre>
+<pre><code>  date gdp_billions iso2c
+1 2020     1333.336    AU
+2 2019     1398.350    AU</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>gdp_data <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(iso2_list, get_gdp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Testing API for one country population</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>us_url <span class="ot">&lt;-</span> <span class="st">"https://api.worldbank.org/v2/country/US/indicator/SP.POP.TOTL?format=json"</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>us_data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(us_url)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>us_pop <span class="ot">&lt;-</span> us_data[[<span class="dv">2</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>get_population <span class="ot">&lt;-</span> <span class="cf">function</span>(iso2) {</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  url <span class="ot">&lt;-</span> <span class="fu">glue</span>(<span class="st">"https://api.worldbank.org/v2/country/{iso2}/indicator/SP.POP.TOTL?format=json"</span>)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  my_data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(url)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(my_data[[<span class="dv">2</span>]])) {</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(my_data[[<span class="dv">2</span>]] <span class="sc">%&gt;%</span> </span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>             <span class="fu">filter</span>(date <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2019"</span>,<span class="st">"2020"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>             <span class="fu">select</span>(date, value) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>             <span class="fu">mutate</span>(<span class="at">iso2c =</span> iso2))</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a><span class="fu">get_population</span>(<span class="st">"AU"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  date    value iso2c
+1 2020 25649248    AU
+2 2019 25334826    AU</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>population_data <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(iso2_list, get_population)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>#External CO2 data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>co2 <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 50411 Columns: 79
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (2): country, iso_code
+dbl (77): year, population, gdp, cement_co2, cement_co2_per_capita, co2, co2...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<p>#For our first supplemental dataset, we cited the World Bank API to gather data on both GDP and population. We figured this data would be necessary if we wanted to find out how plastic waste relates to the size of a countries population and/or economy.</p>
+<p>#For the second dataset we found it from a website called “Our World in Data” and it contains a lot of information on different types of emissions, but in order to keep it less messy we decided to focus exclusively on the CO2 emissions and wanted to see if there was a relationship between the two.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>co2_sm <span class="ot">&lt;-</span> co2 <span class="sc">%&gt;%</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2019</span>, <span class="dv">2020</span>))</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>co2_sm <span class="ot">&lt;-</span> co2_sm <span class="sc">%&gt;%</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">iso2 =</span> <span class="fu">countrycode</span>(iso_code, <span class="st">"iso3c"</span>, <span class="st">"iso2c"</span>))</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>gdp_data <span class="ot">&lt;-</span> gdp_data <span class="sc">%&gt;%</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">as.numeric</span>(date))</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>population_data <span class="ot">&lt;-</span> population_data <span class="sc">%&gt;%</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">as.numeric</span>(date))</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>meta_set <span class="ot">&lt;-</span> plastics <span class="sc">%&gt;%</span></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(gdp_data, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"iso2"</span> <span class="ot">=</span> <span class="st">"iso2c"</span>, <span class="st">"year"</span> <span class="ot">=</span> <span class="st">"date"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(population_data, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"iso2"</span> <span class="ot">=</span> <span class="st">"iso2c"</span>, <span class="st">"year"</span> <span class="ot">=</span> <span class="st">"date"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(co2_sm, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"iso2"</span>, <span class="st">"year"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>graph1 <span class="ot">&lt;-</span> meta_set <span class="sc">%&gt;%</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2019</span>, parent_company <span class="sc">==</span> <span class="st">"Grand Total"</span>)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>graph1 <span class="ot">&lt;-</span> graph1 <span class="sc">%&gt;%</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">gdp_per_capita =</span> gdp <span class="sc">/</span> population,</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">plastic_waste_per_capita =</span> grand_total <span class="sc">/</span> population</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(graph1, <span class="fu">aes</span>(<span class="at">x =</span> gdp_per_capita, <span class="at">y =</span> plastic_waste_per_capita)) <span class="sc">+</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"GDP per Capita vs Plastic Waste per Capita (2019)"</span>,</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"GDP per capita"</span>,</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Plastic items per capita"</span></span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing non-finite outside the scale range
+(`stat_smooth()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="project1checkin_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
