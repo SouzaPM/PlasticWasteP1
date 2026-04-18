@@ -260,3 +260,39 @@ ggplot(graph1, aes(x = gdp_per_capita, y = plastic_waste_per_capita)) +
     y = "Plastic items per capita"
   )
 ```
+
+```{r}
+
+#Fuck this graph man, lowk probably just better if I measured the percentage change from 2019 to 2020 for both.
+
+meta_set <- meta_set %>%
+  mutate(
+    parent_company = ifelse(
+      parent_company %in% c("NULL", "null"),
+      "Grand Total",
+      parent_company
+    )
+  )
+
+graph2_plastic <- meta_set %>%
+  filter(parent_company == "Grand Total", year %in% c(2019, 2020)) %>%
+  mutate(plastic_per_capita = grand_total / population)
+
+graph2_co2 <- co2 %>%
+  filter(country == "World", year %in% c(2019, 2020)) %>%
+  select(country, year, co2_per_capita)
+
+graph2 <- graph2_plastic %>%
+  left_join(graph2_co2, by = "year")
+
+ggplot(graph2, aes(x = factor(year))) +
+  geom_line(aes(y = plastic_per_capita)) +
+  geom_point(aes(y = plastic_per_capita)) +
+  geom_line(aes(y = co2_per_capita.y)) +
+  geom_point(aes(y = co2_per_capita.y))
+  labs(
+    title = "Plastic Waste vs CO₂ Emissions per Capita (2019–2020)",
+    x = "Year",
+    y = "Per capita value"
+  )
+```
