@@ -94,6 +94,7 @@ total_company_volunteers <- function(company) {
 }
 
 plastics |>
+  filter(!parent_company %in% c("Grand Total", "null", "NULL", "Unbranded")) |>
   distinct(parent_company) |>
   mutate(
     total_volunteers = map_dbl(parent_company, total_company_volunteers)
@@ -107,6 +108,7 @@ Which parent companies are responsible for the most total plastic waste?
 
 ```{r}
 top_companies <- plastics |>
+  filter(!parent_company %in% c("Grand Total", "null", "NULL", "Unbranded")) |>
   group_by(parent_company) |>
   summarise(
     total_waste = sum(grand_total, na.rm = TRUE),
@@ -262,8 +264,7 @@ ggplot(graph1, aes(x = gdp_per_capita, y = plastic_waste_per_capita)) +
 ```
 
 ```{r}
-
-#Fuck this graph man, lowk probably just better if I measured the percentage change from 2019 to 2020 for both.
+#| label: Affect of COVID on Plastic Waste vs CO2 Emissions
 
 meta_set <- meta_set %>%
   mutate(
@@ -274,25 +275,35 @@ meta_set <- meta_set %>%
     )
   )
 
-graph2_plastic <- meta_set %>%
-  filter(parent_company == "Grand Total", year %in% c(2019, 2020)) %>%
-  mutate(plastic_per_capita = grand_total / population)
 
-graph2_co2 <- co2 %>%
-  filter(country == "World", year %in% c(2019, 2020)) %>%
-  select(country, year, co2_per_capita)
-
-graph2 <- graph2_plastic %>%
-  left_join(graph2_co2, by = "year")
-
-ggplot(graph2, aes(x = factor(year))) +
-  geom_line(aes(y = plastic_per_capita)) +
-  geom_point(aes(y = plastic_per_capita)) +
-  geom_line(aes(y = co2_per_capita.y)) +
-  geom_point(aes(y = co2_per_capita.y))
-  labs(
-    title = "Plastic Waste vs CO₂ Emissions per Capita (2019–2020)",
-    x = "Year",
-    y = "Per capita value"
+co2_change <- co2 %>%
+  filter(year %in% c(2019, 2020),
+         country == "World") %>%
+  summarise(
+    pct_change = (co2_per_capita[year == 2020] - co2_per_capita[year == 2019]) /
+                 co2_per_capita[year == 2019] * 100
   )
+
+plastic_data <- meta_set %>%
+  filter(parent_company == "Grand Total") %>%
+  group_by(year) %>%
+  summarise(
+    total_plastic = sum(grand_total),
+    total_population = sum(population),
+    per_capita = total_plastic / total_population
+  )
+
+plastic_change <- plastic_data %>%
+  summarise(
+    pct_change = (per_capita[year == 2020] - per_capita[year == 2019]) /
+                 per_capita[year == 2019] * 100
+  )
+
+summary_table<- tibble(
+  waste_metric = c("CO2 per capita", "Plastic per capita"),
+  percentage_change = c(co2_change$pct_change,
+                 plastic_change$pct_change)
+)
+
+summary_table
 ```
