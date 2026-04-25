@@ -12,6 +12,8 @@ library(tidyjson)
 library(glue)
 library(countrycode)
 library(gt)
+library(hrbrthemes)
+library(viridis)
 ```
 
 ```{r}
@@ -363,4 +365,34 @@ model_table %>%
     md("Table 1: Linear regression examining the relationship between GDP per capita and plastic waste per capita in 2019.")
   )
 ```
->>>>>>> 8066d13cdc441f02776d618531fe665c5ae808c7
+
+```{r}
+#| warning: FALSE
+#| fig-alt: "Bubbleplot showing the GDP per Capita vs CO2 Emission Per Capita for 51 countries. The size of the bubble shows the relative size of the respective countries population. The color of the bubble represents the relative level of that countries GDP. We see that countries with larger populations tend to have smaller GDP per Capita and lower CO2 Emissions Per Capita."
+
+model_data %>% 
+  arrange(desc(population)) %>% 
+  mutate(country.x = as.factor(country.x),
+         gdp_level = case_when(
+           is.na(gdp_billions) ~ "Other",
+           gdp_billions < 100 ~ "Low",
+           gdp_billions >= 100 & gdp_billions < 500 ~ "Lower-Mid",
+           gdp_billions >= 500 & gdp_billions < 1000 ~ "Upper-Mid",
+           gdp_billions >= 1000 ~ "High"
+         ),
+         gdp_level = factor(gdp_level,
+                            levels = c("Low","Lower-Mid","Upper-Mid","High","Other"))) %>% 
+  ggplot(aes(x = gdp_per_capita, y = co2_per_capita, size = population, color = gdp_level)) +
+    geom_point(alpha = 0.5) + 
+    scale_size(range = c(1,20), name = "Population(Millions)") +
+    scale_fill_viridis(discrete = TRUE, guide = FALSE, option = "A") + 
+    theme_ft_rc() +
+  labs(
+    x = "GDP Per Capita",
+    y = "CO2 Emissions Per Capita",
+    title = "Bubble Plot of GDP and CO2 Emissions Per Capita",
+    subtitle = "By Population Size"
+  ) 
+
+```
+
