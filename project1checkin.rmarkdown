@@ -416,3 +416,4 @@ ggplot(model_data, aes(x = plastic_waste_per_capita, y = co2_per_capita)) +
 ```
 
 The visualizations show the relationship between GDP and CO2 emissions, the regression model shows explicitly how GDP per capita can predict plastic waste per capita, giving us a way to quantify the relationship between the two groups.
+
