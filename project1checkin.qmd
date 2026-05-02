@@ -1,8 +1,17 @@
 ---
-title: "Project1 Draft"
-format: html
+title: "Project 1 Final Report"
+format:
+  html:
+    theme: cosmo
+    code-fold: true
+    code-summary: "Show code"
+    toc: true
+    number-sections: true
+embed-resources: true
 editor: visual
-embed-resources: true 
+execute:
+  warning: false
+  message: false
 ---
 
 ```{r}
@@ -117,7 +126,10 @@ get_population <- function(iso2) {
 
 get_population("AU")
 
-population_data <- map_dfr(iso2_list, get_population)
+population_data <- map_dfr(iso2_list, function(x) {
+  Sys.sleep(1)
+  get_population(x)
+})
 ```
 
 
@@ -152,7 +164,11 @@ population_data <- population_data %>%
 meta_set <- plastics %>%
   left_join(gdp_data, by = c("iso2" = "iso2c", "year" = "date")) %>%
   left_join(population_data, by = c("iso2" = "iso2c", "year" = "date")) %>%
-  left_join(co2_sm, by = c("iso2", "year"))
+  left_join(co2_sm, by = c("iso2", "year")) %>%
+  mutate(
+    gdp_per_capita = gdp_billions * 1e9 / population,
+    plastic_waste_per_capita = grand_total / population
+  )
 ```
 
 
@@ -173,8 +189,8 @@ How much plastic waste was collected in each country from 2019-2020?
 
 ```{r}
 country_waste_summary <- function(plastics) {
-  
   plastics |>
+    mutate(country = str_to_lower(country)) |>
     filter(parent_company == "Grand Total") |>
     group_by(country) |>
     summarise(
@@ -226,6 +242,7 @@ waste_per_volunteer_country <- map_dfr(countries, function(c) {
   plastics |>
     filter(parent_company == "Grand Total",
            country == c) |>
+    mutate(c = str_to_lower(c)) |>
     summarise(
       country = c,
       total_waste = sum(grand_total, na.rm = TRUE),
@@ -341,7 +358,7 @@ model_table %>%
   )
 ```
 
-The regression shows a positive relationship between GDP per capita and plastic waste per capita. This is suggested by the negative coefficient and implies that a increase in GDP means an decrease in plastic waste per capita. With a p-value of 0.02 on the slope we have sufficent evidence to conclude that there is a relationship between the two varaibles.
+The regression shows a positive relationship between GDP per capita and plastic waste per capita. This is suggested by the negative coefficient and implies that a increase in GDP means an decrease in plastic waste per capita. With a p-value of 0.02 on the slope we have sufficient evidence to conclude that there is a relationship between the two varaibles.
 
 
 
@@ -387,7 +404,7 @@ summary_table<- tibble(
   percentage_change = c(co2_change$pct_change,
                  plastic_change$pct_change)
 )
-
+ # gt this table
 summary_table
 ```
 
@@ -437,7 +454,12 @@ gdp_co2_table |>
   ) |>
   tab_caption(
     "Countries GDP per capita & CO2 per capita, sorted by population"
-  )
+  ) |>
+  fmt_currency(
+  columns = contains("gdp"),
+  currency = "USD",
+  decimals = 0
+)
 ```
 
 ## RQ 2 Data Summary (2 of 2):
@@ -446,28 +468,29 @@ Does there appear to be a relationship between the rank of a countries GDP per c
 
 ```{r}
 countries <- meta_set |>
-  filter(year == 2019,
-         !is.na(country.x),
-         country.x != "Taiwan") |>
+  filter(
+    year == 2019,
+    !is.na(country.x),
+    country.x != "Taiwan"
+  ) |>
   distinct(country.x) |>
   pull(country.x)
 
 ranked_table <- map_dfr(countries, function(c) {
-  
   meta_set |>
     filter(country.x == c, year == 2019) |>
     summarise(
       country = c,
-      gdp_per_capita = mean(gdp_billions * 1,000,000,000 / population, na.rm = TRUE),
+      gdp_per_capita = mean(gdp_billions * 1e9 / population, na.rm = TRUE),
       co2_per_capita = mean(co2_per_capita, na.rm = TRUE)
     )
-  
 }) |>
+  filter(!is.na(gdp_per_capita), !is.na(co2_per_capita)) |>
   mutate(
-    gdp_rank = paste0("#", min_rank(desc(gdp_per_capita))),
-    co2_rank = paste0("#", min_rank(desc(co2_per_capita)))
+    gdp_rank = min_rank(desc(gdp_per_capita)),
+    co2_rank = min_rank(desc(co2_per_capita))
   ) |>
-  arrange(as.numeric(gsub("#", "", gdp_rank)))
+  arrange(gdp_rank)
 
 ranked_table |>
   slice_head(n = 10) |>
@@ -476,20 +499,50 @@ ranked_table |>
     country = "Country",
     gdp_per_capita = "GDP Per Capita",
     co2_per_capita = "CO2 Per Capita",
-    gdp_rank = "Rank in GDP Per Capita",
-    co2_rank = "Rank in CO2 Per Capita")|>
+    gdp_rank = "GDP Rank",
+    co2_rank = "CO2 Rank"
+  ) |>
+  fmt_currency(
+    columns = contains("gdp"),
+    currency = "USD",
+    decimals = 0
+  ) |>
   fmt_number(
-    columns = c(gdp_per_capita, co2_per_capita),
-    decimals = 0,
+    columns = c(co2_per_capita),
+    decimals = 2,
     use_seps = TRUE
   ) |>
+  fmt_number(
+    columns = c(gdp_rank, co2_rank),
+    decimals = 0
+  ) |>
+  tab_spanner(
+    label = "Per-Capita Measures",
+    columns = c(gdp_per_capita, co2_per_capita)
+  ) |>
+  tab_spanner(
+    label = "Global Rankings",
+    columns = c(gdp_rank, co2_rank)
+  ) |>
+  data_color(
+    columns = c(gdp_rank, co2_rank),
+    fn = scales::col_numeric(
+      palette = c("#DCEAF7", "#2C7FB8"),
+      domain = c(1, 30)
+    )
+  ) |>
   tab_header(
-    title = md("**GDP vs CO2 Per Capita Ranking Comparison (2019)**"),
-    subtitle = "Countries ranked separately by GDP per capita and CO2 per capita"
+    title = md("**GDP and CO2 Per-Capita Ranking Comparison**"),
+    subtitle = "Top 10 countries ranked by GDP per capita in 2019"
   ) |>
   tab_caption(
-    "Countries showing worldwide rank in GDP per capita and CO2 emissions per capita (sorted by gdp per capita)"
+    "Table 6. Comparison of country rankings for GDP per capita and CO2 emissions per capita in 2019."
+  ) |>
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels()
   )
+  
 ```
 
 
@@ -498,53 +551,70 @@ ranked_table |>
 
 
 ```{r}
-#| warning: FALSE
-#| fig-alt: "Bubbleplot showing the GDP per Capita vs CO2 Emission Per Capita for 51 countries. The size of the bubble shows the relative size of the respective countries population. The color of the bubble represents the relative level of that countries GDP. We see that countries with larger populations tend to have smaller GDP per Capita and lower CO2 Emissions Per Capita."
+#| warning: false
+#| label: fig-rq2-bubble
+#| fig-cap: "GDP per capita and CO2 emissions per capita across countries in 2019, with bubble size representing population."
+#| fig-alt: "Bubble plot of GDP per capita versus CO2 emissions per capita for 51 countries in 2019. Bubble size represents population and color indicates GDP level. Countries with higher GDP per capita tend to also have higher CO2 emissions per capita."
+
 model_data %>% 
   arrange(desc(population)) %>% 
-  mutate(country.x = as.factor(country.x),
-         gdp_level = case_when(
-           is.na(gdp_billions) ~ "Other",
-           gdp_billions < 100 ~ "Low",
-           gdp_billions >= 100 & gdp_billions < 500 ~ "Lower-Mid",
-           gdp_billions >= 500 & gdp_billions < 1000 ~ "Upper-Mid",
-           gdp_billions >= 1000 ~ "High"
-         ),
-         gdp_level = factor(gdp_level,
-                            levels = c("Low","Lower-Mid","Upper-Mid","High","Other"))) %>% 
-  ggplot(aes(x = gdp_per_capita, y = co2_per_capita, size = population, color = gdp_level)) +
-    geom_point(alpha = 0.5) + 
-    scale_size(range = c(1,20), name = "Population(Millions)") +
-    scale_fill_viridis(discrete = TRUE, guide = FALSE, option = "A") + 
-  scale_x_log10() +
-scale_y_log10() +
-    theme_ft_rc() +
+  mutate(
+    country.x = as.factor(country.x),
+    gdp_level = case_when(
+      is.na(gdp_billions) ~ "Other",
+      gdp_billions < 100 ~ "Low",
+      gdp_billions < 500 ~ "Lower-Mid",
+      gdp_billions < 1000 ~ "Upper-Mid",
+      gdp_billions >= 1000 ~ "High"
+    ),
+    gdp_level = factor(
+      gdp_level,
+      levels = c("Low", "Lower-Mid", "Upper-Mid", "High", "Other")
+    )
+  ) %>% 
+  ggplot(aes(
+    x = gdp_per_capita,
+    y = co2_per_capita,
+    size = population,
+    color = gdp_level
+  )) +
+  geom_point(alpha = 0.65) +
+  scale_size(range = c(2, 14), name = "Population") +
+  scale_color_viridis_d(option = "A", end = 0.9, name = "GDP Level") +
+  scale_x_log10(labels = scales::label_dollar()) +
+  scale_y_log10(labels = scales::label_number()) +
+  theme_ft_rc() +
   labs(
-    x = "GDP Per Capita (log scale)",
-    y = "CO2 Emissions Per Capita (log scale) ",
-    title = "Bubble Plot of GDP and CO2 Emissions Per Capita (log scaled) ",
-    subtitle = "By Population Size"
-  ) 
-
+    x = "GDP Per Capita",
+    y = "CO2 Emissions Per Capita",
+    title = "Bubble Plot of GDP and CO2 Emissions Per Capita",
+    subtitle = "Countries in 2019, with bubble size representing population"
+  )
 ```
+*Alt text:* Bubble plot of GDP per capita versus CO2 emissions per capita for 51 countries in 2019. Bubble size represents population and color indicates GDP level. Countries with higher GDP per capita tend to also have higher CO2 emissions per capita.
 
 ```{r}
-#| warning: FALSE
-#| fig-alt: " Hex plot showing plastic waste per capita on the x-axis and CO2 emissions per capita on the y-axis for 51 countries in 2019, both on log scales. Most countries cluster around low to mid levels of plastic waste per capita. Countries with higher plastic waste per capita tend to also have higher CO2 emissions per capita, suggesting a weak positive correlation."
+#| warning: false
+#| label: fig-rq1-facet
+#| fig-cap: "Relationship between GDP per capita and plastic waste per capita across countries in 2019 and 2020, with separate panels for each year."
+#| fig-alt: "Faceted scatterplot showing GDP per capita versus plastic waste per capita for countries in 2019 and 2020. Each panel includes a fitted trend line. The relationship appears positive in both years, allowing comparison of how the pattern changes between 2019 and 2020."
 
-model_data %>% 
-  ggplot(aes(x = plastic_waste_per_capita, y = co2_per_capita)) +
-    geom_hex(bins = 10) +
-    scale_x_log10() +
-    scale_y_log10() +
-    scale_fill_viridis_c(option = "C", name = "Countries") +
-    labs(
-      title = "Log Plastic Waste vs Log CO2 Emissions per Capita",
-      subtitle = "(2019)",
-      x = "Plastic Waste per Capita (log scale)",
-      y = "CO2 Emissions per Capita (log scale)"
-    ) +
-    theme_ft_rc()
+ggplot(
+  meta_set %>%
+    filter(year %in% c(2019, 2020), parent_company == "Grand Total"),
+  aes(x = gdp_per_capita, y = plastic_waste_per_capita)
+) +
+  geom_point(color = "#2C7FB8", alpha = 0.7, size = 2.5) +
+  geom_smooth(method = "lm", se = FALSE, color = "#D95F0E", linewidth = 1) +
+  scale_x_log10(labels = scales::label_dollar()) +
+  scale_y_log10(labels = scales::label_number()) +
+  facet_wrap(~year) +
+  labs(
+    title = "GDP per Capita vs Plastic Waste per Capita",
+    subtitle = "Comparison of country-level relationships in 2019 and 2020",
+    x = "GDP per Capita",
+    y = "Plastic Waste per Capita"
+  ) +
+  theme_ft_rc()
 ```
-
-The visualizations show the relationship between GDP and CO2 emissions, the regression model shows explicitly how GDP per capita can predict plastic waste per capita, giving us a way to quantify the relationship between the two groups.
+*Alt text:* Faceted scatterplot showing GDP per capita versus plastic waste per capita for countries in 2019 and 2020. Each panel includes a fitted trend line. The relationship appears positive in both years, allowing comparison of how the pattern changes between 2019 and 2020.
