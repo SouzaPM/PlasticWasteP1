@@ -640,26 +640,26 @@ model_data %>%
 ```{r}
 #| warning: false
 #| label: fig-rq1-facet
-#| fig-cap: "Relationship between GDP per capita and plastic waste per capita across countries in 2019 and 2020, with separate panels for each year."
-#| fig-alt: "Faceted scatterplot showing GDP per capita versus plastic waste per capita for countries in 2019 and 2020. Each panel includes a fitted trend line. The relationship appears positive in both years, allowing comparison of how the pattern changes between 2019 and 2020."
+#| fig-cap: "Relationship between GDP per capita and CO2 waste per capita across countries in 2019 and 2020, with separate panels for each year."
+#| fig-alt: "Faceted scatterplot showing GDP per capita versus CO2 waste per capita for countries in 2019 and 2020. Each panel includes a fitted trend line. The relationship appears positive in both years, allowing comparison of how the pattern changes between 2019 and 2020."
 
 ggplot(
   meta_set %>%
     filter(year %in% c(2019, 2020), parent_company == "Grand Total"),
-  aes(x = gdp_per_capita, y = plastic_waste_per_capita)
+  aes(x = gdp_per_capita, y = co2_per_capita)
 ) +
   geom_point(color = "#2C7FB8", alpha = 0.7, size = 2.5) +
-  geom_smooth(method = "lm", se = FALSE, color = "#D95F0E", linewidth = 1) +
+  geom_smooth(method = "loess", se = FALSE, color = "#D95F0E", linewidth = 1) +
   scale_x_log10(labels = scales::label_dollar()) +
   scale_y_log10(labels = scales::label_number()) +
   facet_wrap(~year) +
   labs(
-    title = "GDP per Capita vs Plastic Waste per Capita",
+    title = "GDP per Capita vs CO2 Waste per Capita",
     subtitle = "Comparison of country-level relationships in 2019 and 2020",
     x = "GDP per Capita",
-    y = "Plastic Waste per Capita"
+    y = "CO2 Waste per Capita"
   ) +
   theme_ft_rc()
 ```
 
-*Alt text:* Faceted scatterplot showing GDP per capita versus plastic waste per capita for countries in 2019 and 2020. Each panel includes a fitted trend line. The relationship appears positive in both years, allowing comparison of how the pattern changes between 2019 and 2020.
+*Alt text:* Faceted scatterplot showing GDP per capita versus CO2 waste per capita for countries in 2019 and 2020. Each panel includes a fitted trend line. The relationship appears positive in both years, allowing comparison of how the pattern changes between 2019 and 2020.
